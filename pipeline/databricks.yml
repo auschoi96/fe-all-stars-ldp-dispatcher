@@ -4,6 +4,7 @@ bundle:
 sync:
   include:
     - "src/**/*.py"
+    - "src/**/*.ipynb"
     - "src/**/*.txt"
     - "src/**/*.yml"
     - "src/**/*.html"
@@ -66,6 +67,32 @@ resources:
       max_concurrent_runs: 1
       timeout_seconds: 3600
 
+    agent_monitoring:
+      name: "Agent Monitor - ${workspace.current_user.short_name}"
+      description: "Continuous Agent to review Turbine data and submit tickets"
+      continuous:
+        pause_status: "UNPAUSED"
+      tasks:
+        - task_key: "agent_monitoring_job"
+          notebook_task:
+            notebook_path: "./src/Agent_interaction.ipynb"
+            base_parameters:
+              instance_name: "fe_shared_demo"
+              current_username: "${workspace.current_user.userName}"
+              current_shortname: "${workspace.current_user.short_name}"
+              batch_interval: "180"
+          environment_key: serverless
+      environments:
+        - environment_key: serverless
+          spec:
+            client: "1"
+            dependencies:
+              - dspy==3.0.3
+              - mlflow==3.4.0
+              - databricks-sdk==0.67.0
+      max_concurrent_runs: 1
+      timeout_seconds: 36000
+
   pipelines:
     windmill_lakeflow_pipeline:
       name: "Windmill IoT Lakeflow Pipeline - ${workspace.current_user.short_name}"
@@ -81,9 +108,9 @@ resources:
       photon: true
       serverless: true
       continuous: true
-
-  apps:
-    fe_all_stars_dashboard:
-      name: "windmill-iot-streaming"
-      description: "FE All Stars Agent Dispatcher Dashboard"
-      source_code_path: "./src/app"
+#
+#  apps:
+#    fe_all_stars_dashboard:
+#      name: "windmill-iot-streaming"
+#      description: "FE All Stars Agent Dispatcher Dashboard"
+#      source_code_path: "./src/app"

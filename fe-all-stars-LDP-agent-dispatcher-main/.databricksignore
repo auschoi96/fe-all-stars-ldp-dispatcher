@@ -1,0 +1,49 @@
+# Node.js - exclude entire client directory for deployment
+client/
+
+# FastAPI server - not needed for DLT pipeline deployment
+server/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Testing
+coverage/
+.coverage
+.pytest_cache/
+
+# Other
+*.tmp
+*.temp
+test_config.py

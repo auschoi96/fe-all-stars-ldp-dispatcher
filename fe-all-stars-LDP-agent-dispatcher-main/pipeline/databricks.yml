@@ -1,0 +1,89 @@
+bundle:
+  name: windmill-iot-streaming
+
+sync:
+  include:
+    - "src/**/*.py"
+    - "src/**/*.txt"
+    - "src/**/*.yml"
+    - "src/**/*.html"
+    - "src/**/*.css"
+    - "src/**/*.js"
+    - "databricks.yml"
+
+workspace:
+  host: https://e2-demo-field-eng.cloud.databricks.com
+  profile: e2-demo-field-eng
+  
+variables:
+  catalog:
+    description: Unity Catalog to use (defaults to user's short name)
+    default: users
+  schema:
+    description: Schema to use for tables
+    default: "${workspace.current_user.short_name}"
+
+resources:
+  jobs:
+    windmill_data_generator:
+      name: "Windmill IoT Data Generator - ${workspace.current_user.short_name}"
+      description: "Generates synthetic windmill IoT data using dbldatagen"
+      job_clusters:
+        - job_cluster_key: "main_cluster"
+          new_cluster:
+            spark_version: "13.3.x-scala2.12"
+            node_type_id: "i3.xlarge"
+            num_workers: 0  # Single-node cluster
+            spark_conf:
+              "spark.databricks.cluster.profile": "singleNode"
+              "spark.master": "local[*]"
+            custom_tags:
+              ResourceClass: "SingleNode"
+            # Enable Unity Catalog
+            data_security_mode: "SINGLE_USER"
+            runtime_engine: "PHOTON"
+      tasks:
+        - task_key: "generate_windmill_data"
+          job_cluster_key: "main_cluster"
+          spark_python_task:
+            python_file: "./src/windmill_data_generator/main.py"
+            parameters:
+              - "--catalog"
+              - "${var.catalog}"
+              - "--schema"
+              - "${var.schema}"
+              - "--table"
+              - "raw_sensor_data"
+              - "--records-per-batch"
+              - "10"
+              - "--batch-interval"
+              - "15"
+              - "--max-iterations"
+              - "100000"
+          libraries:
+            - pypi:
+                package: "dbldatagen>=0.3.0"
+      max_concurrent_runs: 1
+      timeout_seconds: 3600
+
+  pipelines:
+    windmill_lakeflow_pipeline:
+      name: "Windmill IoT Lakeflow Pipeline - ${workspace.current_user.short_name}"
+      catalog: "${var.catalog}"
+      target: "${var.schema}"
+      libraries:
+        - file:
+            path: "./src/lakeflow_pipeline.py"
+      configuration:
+        "pipelines.applyChangesPreviewTableOptions": "true"
+        # Enable event log publishing for incremental refresh monitoring
+        "pipelines.enableEventLogging": "true"
+      photon: true
+      serverless: true
+      continuous: true
+
+  apps:
+    fe_all_stars_dashboard:
+      name: "windmill-iot-streaming"
+      description: "FE All Stars Agent Dispatcher Dashboard"
+      source_code_path: "./src/app"

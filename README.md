@@ -126,12 +126,17 @@ for pipeline in client.pipelines.list_pipelines():
    ```bash
    databricks bundle run windmill_pipeline --profile {your-profile}
    ```
+   
+4. **Run Lakebase Clean Up**:
+   ```bash
+   databricks bundle run Drop Tables --profile {your-profile}
+   ```
 
-4. **Access the dashboard**:
+5. **Access the dashboard**:
    - Open: `https://{your-workspace}.cloud.databricks.com/apps/windmill-iot-streaming/`
    - The Flask app runs on port 8080 within Databricks Apps
 
-5. **Create Genie Space**:
+6. **Create Genie Space**:
    - Follow the instructions here to create a [Genie Space](https://docs.databricks.com/aws/en/genie/set-up#-create-a-genie-space)
    - Add this view to the Genie Space: users.{your username}.gold_maintenance_alerts   
 

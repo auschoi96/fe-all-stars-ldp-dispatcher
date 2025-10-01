@@ -107,6 +107,8 @@ for pipeline in client.pipelines.list_pipelines():
 - Access to a Databricks workspace with Unity Catalog
 - Python 3.8+ for local development
 
+**Follow these steps carefull as Genie Spaces must be created via the UI **
+
 ### Quick Start
 
 1. **Deploy everything** (data generator, DLT pipeline, and Flask app):
@@ -128,6 +130,10 @@ for pipeline in client.pipelines.list_pipelines():
 4. **Access the dashboard**:
    - Open: `https://{your-workspace}.cloud.databricks.com/apps/windmill-iot-streaming/`
    - The Flask app runs on port 8080 within Databricks Apps
+
+5. **Create Genie Space**:
+   - Follow the instructions here to create a [Genie Space](https://docs.databricks.com/aws/en/genie/set-up#-create-a-genie-space)
+   - Add this view to the Genie Space: users.{your username}.gold_maintenance_alerts   
 
 ### Development Commands
 

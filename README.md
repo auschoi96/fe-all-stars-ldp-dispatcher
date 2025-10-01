@@ -18,14 +18,16 @@ This project provides a complete windmill IoT monitoring solution that:
 │   ├── databricks.yml                    # DAB configuration with jobs, pipelines & Flask app
 │   └── src/
 │       ├── app/
-│       │   └── app.py                   # Flask dashboard with optimized Databricks SDK calls
+│       │   ├── app.py                   # Flask dashboard with optimized Databricks SDK calls
+|       |   ├── app.yml
+|       |   └── requirements.txt
 │       ├── windmill_data_generator/
 │       │   ├── __init__.py
 │       │   └── main.py                  # Synthetic windmill data generation
 │       ├── lakeflow_pipeline.py         # DLT bronze→silver→gold processing
+|       ├── Agent_interaction.ipynb
+|       ├── cleanups.ipynb
 │       └── windmill_dashboard_notebook.py # Databricks notebook for analysis
-├── setup.py                            # Python package setup
-├── requirements.txt                     # Dependencies
 └── README.md
 ```
 
